@@ -40,7 +40,7 @@ module Lita
       end
 
       def feature(response)
-        base_uri = 'https://midi-chlorian-meter.firebaseio.com/'
+        base_uri = 'https://br-rollcall.firebaseio.com/'
         firebase = Firebase::Client.new(base_uri)
         response.reply(response.user.name + "(" + response.user.mention_name + ") requested feature " + response.matches[0][0])
 	firebaseResponse = firebase.push("requests", { :user => response.user.mention_name, :feature => response.matches[0][0], :timestamp => {:'.sv' => "timestamp"}})
@@ -54,7 +54,7 @@ module Lita
           response.reply("for month: #{month}")
         end
 
-        base_uri = 'https://midi-chlorian-meter.firebaseio.com/'
+        base_uri = 'https://br-rollcall.firebaseio.com/'
         firebase = Firebase::Client.new(base_uri)
         firebaseResponse = firebase.get("users")
         scores = { }
@@ -107,7 +107,7 @@ module Lita
       end
 
       def addEvent(response, users, task_alias, note=nil, date=nil, value=nil)
-        base_uri = 'https://midi-chlorian-meter.firebaseio.com/'
+        base_uri = 'https://br-rollcall.firebaseio.com/'
         firebase = Firebase::Client.new(base_uri)
         taskresponse = firebase.get("tasks", "orderBy=\"alias\"&equalTo=\"#{task_alias}\"")
         puts(taskresponse.body.keys[0])
@@ -136,7 +136,7 @@ module Lita
       end
 
       def list(response)
-        base_uri = 'https://midi-chlorian-meter.firebaseio.com/'
+        base_uri = 'https://br-rollcall.firebaseio.com/'
         firebase = Firebase::Client.new(base_uri)
         nani = response.matches[0][0].strip
         firebaseResponse = firebase.get(nani)
