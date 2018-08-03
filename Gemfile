@@ -1,9 +1,9 @@
 source "https://rubygems.org"
 
-gem "firebase"
 gem "lita"
-gem "lita-heroku-keepalive"
 gem "lita-slack"
+gem "firebase"
+gem "lita-heroku-keepalive"
 
 # Uncomment to use the IRC adapter
 # gem "lita-irc"
