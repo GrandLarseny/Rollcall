@@ -13,6 +13,8 @@ module Lita
         "points" => "prints points for given month"
       })
 
+      route(/^yo,\s*(.+)/, :echo, command: true)
+      
       route(/^(.+) did ([^ ]+) (value [^ ]+)$/, :event, command: true)
       route(/^(.+) did ([^ ]+) (value [^ ]+) (on [^ ]+)$/, :event, command: true)
       route(/^(.+) did ([^ ]+) (value [^ ]+) (btw .+)$/, :event, command: true)
