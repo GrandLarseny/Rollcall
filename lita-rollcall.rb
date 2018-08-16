@@ -1,6 +1,6 @@
 module Lita
   module Handlers
-    class Standup < Handler
+    class RollcallRobot < Handler
       # insert handler code here
       require 'firebase'
       require 'date'
@@ -9,12 +9,100 @@ module Lita
         "echo TEXT" => "Replies back with TEXT."
       })
 
+      route(/^yo,\s*(.+)/i, :echo, command: true)
+
+      route(/^(t(oday)? *[-:]?) (.*) (y(esterday)? *[-:]?) (.*) (b(locker)? *[-:]?) (.*)/i, :standup, command: true)
+      route(/^(y(esterday)? *[-:]?) (.*) (t(oday)? *[-:]?) (.*) (b(locker)? *[-:]?) (.*)/i, :standup, command: true)
+      route(/^(t(oday)? *[-:]?) (.*) (b(locker)? *[-:]?) (.*) (y(esterday)? *[-:]?) (.*)/i, :standup, command: true)
+      route(/^(b(locker)? *[-:]?) (.*) (t(oday)? *[-:]?) (.*) (y(esterday)? *[-:]?) (.*)/i, :standup, command: true)
+      route(/^(y(esterday)? *[-:]?) (.*) (b(locker)? *[-:]?) (.*) (t(oday)? *[-:]?) (.*)/i, :standup, command: true)
+      route(/^(b(locker)? *[-:]?) (.*) (y(esterday)? *[-:]?) (.*) (t(oday)? *[-:]?) (.*)/i, :standup, command: true)
+      route(/^(t(oday)? *[-:]?) (.*) (y(esterday)? *[-:]?) (.*)/i, :standup, command: true)
+      route(/^(y(esterday)? *[-:]?) (.*) (t(oday)? *[-:]?) (.*)/i, :standup, command: true)
+      route(/^(t(oday)? *[-:]?) (.*) (b(locker)? *[-:]?) (.*)/i, :standup, command: true)
+      route(/^(b(locker)? *[-:]?) (.*) (t(oday)? *[-:]?) (.*)/i, :standup, command: true)
+      route(/^(y(esterday)? *[-:]?) (.*) (b(locker)? *[-:]?) (.*)/i, :standup, command: true)
+      route(/^(b(locker)? *[-:]?) (.*) (y(esterday)? *[-:]?) (.*)/i, :standup, command: true)
+      route(/^(t(oday)? *[-:]?) (.*)/i, :standup, command: true)
+      route(/^(y(esterday)? *[-:]?) (.*)/i, :standup, command: true)
+      route(/^(b(locker)? *[-:]?) (.*)/i, :standup, command: true)
+
+      def echo(response)
+        response.reply(response.matches)
+      end
+
+      def standup(response)
+        today = response.matches
+        yesterday = nil
+        blockers = nil
+
+        response.matches[0].each_index do | mi |
+          argu = response.matches[0][mi]
+          if argu.match(/^t(oday)? *[-:]?/i)
+            today = response.matches[0][mi + 1]
+          end
+          if argu.match(/^y(esterday)? *[-:]?/i)
+            yesterday = response.matches[0][mi + 1]
+          end
+          if argu.match(/^b(locker)? *[-:]?/i)
+            blockers = response.matches[0][mi + 1]
+          end
+        end
+
+        addStandup(response, response.matches[0][0], response.matches[0][1], note, date, value)
+      end
+
+      def addStandup(response, today, yesterday, blockers)
+        base_uri = 'https://br-rollcall.firebaseio.com/'
+        firebase = Firebase::Client.new(base_uri)
+
+        if date==nil
+          date = Date.today.to_s
+        end
+
+        firebase.push("standups", { :user => response.user.id, :room => response.room_object.id, :date => date, :today => today, :yesterday => yesterday, :blockers => blockers })
+      end
+
+
+
+
+      def addEvent(response, users, task_alias, note=nil, date=nil, value=nil)
+        base_uri = 'https://br-rollcall.firebaseio.com/'
+        firebase = Firebase::Client.new(base_uri)
+
+
+
+        taskresponse = firebase.get("tasks", "orderBy=\"alias\"&equalTo=\"#{task_alias}\"")
+        puts(taskresponse.body.keys[0])
+        task = taskresponse.body.values[0]
+	      if date==nil
+	         date = Date.today.to_s
+	      end
+              if value==nil
+                 customValue = false
+                 value = task["value"]
+              else
+                 customValue = true
+              end
+              users.split(" ").each do |atuser|
+                user = atuser[1..-1]
+                userresponse = firebase.get("users", "orderBy=\"$key\"&equalTo=\"#{user}\"")
+                if userresponse.body.keys.count < 1
+                  response.reply("User #{user} not found")
+                end
+                jedi = userresponse.body.values[0]["jedi"]
+                if jedi != nil
+	          firebaseResponse = firebase.push("events", { :user => jedi, :padawan => user.strip, :task => taskresponse.body.keys[0], :value => value/2.0, :date => date, :note => note, :description => task["description"], :customValue => customValue, :timestamp => {:'.sv' => "timestamp"}})
+                end
+	        firebaseResponse = firebase.push("events", { :user => user.strip, :task => taskresponse.body.keys[0], :value => value, :date => date, :note => note, :description => task["description"], :customValue => customValue, :timestamp => {:'.sv' => "timestamp"}})
+              end
+      end
+
+
       route(/^points\s?(.*)/, :points, command: true, help: {
         "points" => "prints points for given month"
       })
 
-      route(/^yo,\s*(.+)/, :echo, command: true)
-      
       route(/^(.+) did ([^ ]+) (value [^ ]+)$/, :event, command: true)
       route(/^(.+) did ([^ ]+) (value [^ ]+) (on [^ ]+)$/, :event, command: true)
       route(/^(.+) did ([^ ]+) (value [^ ]+) (btw .+)$/, :event, command: true)
@@ -37,15 +125,22 @@ module Lita
         "feature" => "create a feature request"
       })
 
-      def echo(response)
-        response.reply(response.matches)
-      end
+
+
+
+
+
+
+
+
+
+
 
       def feature(response)
         base_uri = 'https://br-rollcall.firebaseio.com/'
         firebase = Firebase::Client.new(base_uri)
         response.reply(response.user.name + "(" + response.user.mention_name + ") requested feature " + response.matches[0][0])
-	firebaseResponse = firebase.push("requests", { :user => response.user.mention_name, :feature => response.matches[0][0], :timestamp => {:'.sv' => "timestamp"}})
+	      firebaseResponse = firebase.push("requests", { :user => response.user.mention_name, :feature => response.matches[0][0], :timestamp => {:'.sv' => "timestamp"}})
       end
 
       def points(response)
