@@ -91,13 +91,13 @@ module Lita
           puts "DDL: --- value.user = #{value['user']}"
           rollcall = value["user"]
 
-          if !value["today"].empty?
+          if value["today"] && !value["today"].empty?
             rollcall += "*Today* #{value["today"]}"
           end
-          if !value["yesterday"].empty?
+          if value["yesterday"] && !value["yesterday"].empty?
             rollcall += "*Yesterday* #{value["yesterday"]}"
           end
-          if !value["blockers"].empty?
+          if value["blockers"] && !value["blockers"].empty?
             rollcall += "*Blockers* _#{value["blockers"]}_"
           end
           # if value.today.empty?
