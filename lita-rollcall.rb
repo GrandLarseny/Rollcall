@@ -83,7 +83,7 @@ module Lita
         standupPath = "standups/#{response.room.id}"
         
         rollcallResponse = firebase.get(standupPath, "orderBy=\"date\"&equalTo=\"#{Date.today.to_s}\"")
-        puts "DDL: Found standups #{rollcallResponse}"
+        puts "DDL: Found standups #{rollcallResponse.raw_body}"
 
         rollcallResponse.body.each do |key, value|
           puts "DDL: --- rollcall #{value}"
