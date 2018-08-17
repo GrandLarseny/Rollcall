@@ -66,7 +66,7 @@ module Lita
 
         date = Date.today.to_s
 
-        firebase.push("standups", { :user => response.user.id, :room => response.room_object.id, :date => date, :today => today, :yesterday => yesterday, :blockers => blockers })
+        firebase.push("standups", { :user => response.user.id, :room => response.room.id, :date => date, :today => today, :yesterday => yesterday, :blockers => blockers })
       end
 
 
