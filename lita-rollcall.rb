@@ -18,21 +18,6 @@ module Lita
 
       route(/^callout/i, :replyRollcall, command: true)
       route(/^list/i, :replyRollcall, command: true)
-      # route(/^(t(oday)? *[-:]?) (.*) (y(esterday)? *[-:]?) (.*) (b(locker)? *[-:]?) (.*)/i, :standup, command: true)
-      # route(/^(y(esterday)? *[-:]?) (.*) (t(oday)? *[-:]?) (.*) (b(locker)? *[-:]?) (.*)/i, :standup, command: true)
-      # route(/^(t(oday)? *[-:]?) (.*) (b(locker)? *[-:]?) (.*) (y(esterday)? *[-:]?) (.*)/i, :standup, command: true)
-      # route(/^(b(locker)? *[-:]?) (.*) (t(oday)? *[-:]?) (.*) (y(esterday)? *[-:]?) (.*)/i, :standup, command: true)
-      # route(/^(y(esterday)? *[-:]?) (.*) (b(locker)? *[-:]?) (.*) (t(oday)? *[-:]?) (.*)/i, :standup, command: true)
-      # route(/^(b(locker)? *[-:]?) (.*) (y(esterday)? *[-:]?) (.*) (t(oday)? *[-:]?) (.*)/i, :standup, command: true)
-      # route(/^(t(oday)? *[-:]?) (.*) (y(esterday)? *[-:]?) (.*)/i, :standup, command: true)
-      # route(/^(y(esterday)? *[-:]?) (.*) (t(oday)? *[-:]?) (.*)/i, :standup, command: true)
-      # route(/^(t(oday)? *[-:]?) (.*) (b(locker)? *[-:]?) (.*)/i, :standup, command: true)
-      # route(/^(b(locker)? *[-:]?) (.*) (t(oday)? *[-:]?) (.*)/i, :standup, command: true)
-      # route(/^(y(esterday)? *[-:]?) (.*) (b(locker)? *[-:]?) (.*)/i, :standup, command: true)
-      # route(/^(b(locker)? *[-:]?) (.*) (y(esterday)? *[-:]?) (.*)/i, :standup, command: true)
-      # route(/^(t(oday)? *[-:]?) (.*)/i, :standup, command: true)
-      # route(/^(y(esterday)? *[-:]?) (.*)/i, :standup, command: true)
-      # route(/^(b(locker)? *[-:]?) (.*)/i, :standup, command: true)
 
       def firebaseRef
         base_uri = 'https://br-rollcall.firebaseio.com/'
