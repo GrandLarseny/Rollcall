@@ -83,7 +83,7 @@ module Lita
         puts "DDL: Found standups #{rollcallResponse.raw_body}"
 
         date = Date.today.to_s
-        standups = rollcallResponse.body.select { |standup| standup["date"] == date }
+        standups = rollcallResponse.body.select { |key, standup| standup["date"] == date }
 
         standups.each do |key, value|
           puts "DDL: --- rollcall #{value}"
