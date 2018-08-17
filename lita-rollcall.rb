@@ -38,10 +38,11 @@ module Lita
         today = response.matches
         yesterday = nil
         blockers = nil
-
-        puts(today)
+        
+        puts "DDL: Running standup for: #{today}"
         response.matches[0].each_index do | mi |
           argu = response.matches[0][mi]
+          puts "DDL: -- Matching #{argu}"
           if argu.match(/^t(oday)?/i)
             today = response.matches[0][mi + 1]
           end
@@ -53,7 +54,8 @@ module Lita
           end
         end
 
-        addStandup(response, response.matches[0][0], response.matches[0][1], note, date, value)
+        puts "DDL: Adding standup"
+        addStandup(response, today, yesterday, blockers)
       end
 
       def addStandup(response, today, yesterday, blockers)
