@@ -14,6 +14,9 @@ module Lita
       route(/^(t|today|y|yesterday|b|blocker) ?[-:] *(.*)$/i, :standup, command: true)
       route(/^(t|today|y|yesterday|b|blocker) ?[-:] *(.*)(t|today|y|yesterday|b|blocker) ?[-:] *(.*)$/i, :standup, command: true)
       route(/^(t|today|y|yesterday|b|blocker) ?[-:] *(.*)(t|today|y|yesterday|b|blocker) ?[-:] *(.*)(t|today|y|yesterday|b|blocker) ?[-:] *(.*)$/i, :standup, command: true)
+
+      route(/^callout/i, :replyRollcall, command: true)
+      route(/^list/i, :replyRollcall, command: true)
       # route(/^(t(oday)? *[-:]?) (.*) (y(esterday)? *[-:]?) (.*) (b(locker)? *[-:]?) (.*)/i, :standup, command: true)
       # route(/^(y(esterday)? *[-:]?) (.*) (t(oday)? *[-:]?) (.*) (b(locker)? *[-:]?) (.*)/i, :standup, command: true)
       # route(/^(t(oday)? *[-:]?) (.*) (b(locker)? *[-:]?) (.*) (y(esterday)? *[-:]?) (.*)/i, :standup, command: true)
@@ -29,6 +32,11 @@ module Lita
       # route(/^(t(oday)? *[-:]?) (.*)/i, :standup, command: true)
       # route(/^(y(esterday)? *[-:]?) (.*)/i, :standup, command: true)
       # route(/^(b(locker)? *[-:]?) (.*)/i, :standup, command: true)
+
+      def firebaseRef
+        base_uri = 'https://br-rollcall.firebaseio.com/'
+        firebase = Firebase::Client.new(base_uri)
+      end
 
       def echo(response)
         response.reply(response.matches)
@@ -61,12 +69,29 @@ module Lita
       end
 
       def addStandup(response, today, yesterday, blockers)
-        base_uri = 'https://br-rollcall.firebaseio.com/'
-        firebase = Firebase::Client.new(base_uri)
+        firebase = firebaseRef()
 
         date = Date.today.to_s
 
-        firebase.push("standups", { :user => response.user.id, :room => response.room.id, :date => date, :today => today, :yesterday => yesterday, :blockers => blockers })
+        standupPath = "standups/#{response.room.id}"
+        firebase.push(standupPath, { :user => response.user.mention_name, :date => date, :today => today, :yesterday => yesterday, :blockers => blockers })
+      end
+
+
+      def replyRollcall
+        firebase = firebaseRef()
+        standupPath = "standups/#{response.room.id}"
+        
+        rollcallResponse = firebase.get(standupPath, "orderBy=\"date\"&equalTo=\"#{Date.today.to_s}\"")
+        puts "DDL: Found standups #{rollcallResponse.body.keys}"
+
+        rollcallResponse.body.each do |key, value|
+          puts "DDL: --- rollcall #{value}"
+
+          rollcall = value.user
+          # if value.today.empty?
+          response.reply(rollcall)
+        end
       end
 
 
