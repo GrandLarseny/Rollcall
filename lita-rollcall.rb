@@ -79,17 +79,27 @@ module Lita
 
       def replyRollcall(response)
         firebase = firebaseRef()
-        
-        date = Date.today.to_s
-
         rollcallResponse = firebase.get("standups", "orderBy=\"room\"&equalTo=\"#{response.room.id}\"")
         puts "DDL: Found standups #{rollcallResponse.raw_body}"
 
-        rollcallResponse.body.each do |key, value|
+        date = Date.today.to_s
+        standups = rollcallResponse.body.select( |standup| => standup["date"] = date )
+
+        standups.each do |key, value|
           puts "DDL: --- rollcall #{value}"
 
           puts "DDL: --- value.user = #{value['user']}"
-          rollcall = value.user
+          rollcall = value["user"]
+
+          if !value["today"].empty?
+            rollcall += "*Today* #{value["today"]}"
+          end
+          if !value["yesterday"].empty?
+            rollcall += "*Yesterday* #{value["yesterday"]}"
+          end
+          if !value["blockers"].empty?
+            rollcall += "*Blockers* _#{value["blockers"]}_"
+          end
           # if value.today.empty?
           response.reply(rollcall)
         end
