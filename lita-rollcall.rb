@@ -43,7 +43,7 @@ module Lita
       end
 
       def standup(response)
-        today = response.matches
+        today = nil
         yesterday = nil
         blockers = nil
         
@@ -88,6 +88,7 @@ module Lita
         rollcallResponse.body.each do |key, value|
           puts "DDL: --- rollcall #{value}"
 
+          puts "DDL: --- value.user = #{value.user}"
           rollcall = value.user
           # if value.today.empty?
           response.reply(rollcall)
