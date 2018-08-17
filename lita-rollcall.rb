@@ -73,16 +73,16 @@ module Lita
 
         date = Date.today.to_s
 
-        standupPath = "standups/#{response.room.id}"
-        firebase.push(standupPath, { :user => response.user.mention_name, :date => date, :today => today, :yesterday => yesterday, :blockers => blockers })
+        firebase.push("standups", { :user => response.user.mention_name, :room => response.room.id, :date => date, :today => today, :yesterday => yesterday, :blockers => blockers })
       end
 
 
       def replyRollcall(response)
         firebase = firebaseRef()
-        standupPath = "standups/#{response.room.id}"
         
-        rollcallResponse = firebase.get(standupPath, "orderBy=\"date\"&equalTo=\"#{Date.today.to_s}\"")
+        date = Date.today.to_s
+
+        rollcallResponse = firebase.get("standups", "orderBy=\"room\"&equalTo=\"#{response.room.id}\"")
         puts "DDL: Found standups #{rollcallResponse.raw_body}"
 
         rollcallResponse.body.each do |key, value|
