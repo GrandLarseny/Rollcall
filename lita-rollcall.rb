@@ -54,17 +54,17 @@ module Lita
           end
         end
 
-        puts "DDL: Adding standup"
+        puts "DDL: Calling standup for today - #{today}"
         addStandup(response, today, yesterday, blockers)
+
+        response.reply("Cool beans, #{response.user.name}! Got your standup for the day.")
       end
 
       def addStandup(response, today, yesterday, blockers)
         base_uri = 'https://br-rollcall.firebaseio.com/'
         firebase = Firebase::Client.new(base_uri)
 
-        if date==nil
-          date = Date.today.to_s
-        end
+        date = Date.today.to_s
 
         firebase.push("standups", { :user => response.user.id, :room => response.room_object.id, :date => date, :today => today, :yesterday => yesterday, :blockers => blockers })
       end
