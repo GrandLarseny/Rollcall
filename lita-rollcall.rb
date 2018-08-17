@@ -11,9 +11,9 @@ module Lita
 
       route(/^yo,\s*(.+)/i, :echo, command: true)
 
-      route(/(t|today|y|yesterday|b|blocker) ?[-:] *(.*)/i, :standup, command: true)
-      route(/(t|today|y|yesterday|b|blocker) ?[-:] *(.*)(t|today|y|yesterday|b|blocker) ?[-:] *(.*)/i, :standup, command: true)
-      route(/(t|today|y|yesterday|b|blocker) ?[-:] *(.*)(t|today|y|yesterday|b|blocker) ?[-:] *(.*)(t|today|y|yesterday|b|blocker) ?[-:] *(.*)/i, :standup, command: true)
+      route(/^(t|today|y|yesterday|b|blocker) ?[-:] *(.*)$/i, :standup, command: true)
+      route(/^(t|today|y|yesterday|b|blocker) ?[-:] *(.*)(t|today|y|yesterday|b|blocker) ?[-:] *(.*)$/i, :standup, command: true)
+      route(/^(t|today|y|yesterday|b|blocker) ?[-:] *(.*)(t|today|y|yesterday|b|blocker) ?[-:] *(.*)(t|today|y|yesterday|b|blocker) ?[-:] *(.*)$/i, :standup, command: true)
       # route(/^(t(oday)? *[-:]?) (.*) (y(esterday)? *[-:]?) (.*) (b(locker)? *[-:]?) (.*)/i, :standup, command: true)
       # route(/^(y(esterday)? *[-:]?) (.*) (t(oday)? *[-:]?) (.*) (b(locker)? *[-:]?) (.*)/i, :standup, command: true)
       # route(/^(t(oday)? *[-:]?) (.*) (b(locker)? *[-:]?) (.*) (y(esterday)? *[-:]?) (.*)/i, :standup, command: true)
@@ -42,13 +42,13 @@ module Lita
         puts(today)
         response.matches[0].each_index do | mi |
           argu = response.matches[0][mi]
-          if argu.match(/^t(oday)? *[-:]?/i)
+          if argu.match(/^t(oday)?/i)
             today = response.matches[0][mi + 1]
           end
-          if argu.match(/^y(esterday)? *[-:]?/i)
+          if argu.match(/^y(esterday)?/i)
             yesterday = response.matches[0][mi + 1]
           end
-          if argu.match(/^b(locker)? *[-:]?/i)
+          if argu.match(/^b(locker)?/i)
             blockers = response.matches[0][mi + 1]
           end
         end
