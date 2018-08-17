@@ -78,7 +78,7 @@ module Lita
       end
 
 
-      def replyRollcall
+      def replyRollcall(response)
         firebase = firebaseRef()
         standupPath = "standups/#{response.room.id}"
         
