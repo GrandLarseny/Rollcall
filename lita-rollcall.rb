@@ -88,7 +88,7 @@ module Lita
         rollcallResponse.body.each do |key, value|
           puts "DDL: --- rollcall #{value}"
 
-          puts "DDL: --- value.user = #{value.user}"
+          puts "DDL: --- value.user = #{value['user']}"
           rollcall = value.user
           # if value.today.empty?
           response.reply(rollcall)
