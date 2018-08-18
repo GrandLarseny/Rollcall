@@ -89,13 +89,13 @@ module Lita
             rollcall += "*Blockers:* _#{value["blockers"]}_ "
           end
 
-          if rollcall
-            response.reply(rollcall)
-          else
-            response.reply("_tumbleweeds roll_ Pretty empty around here. No one's reported in yet.")
-          end
+          response.reply(rollcall)
         end
-      end
+        
+        if !rollcall
+          response.reply("_tumbleweeds roll_ Pretty empty around here. No one's reported in yet.")
+        end
+    end
 
       Lita.register_handler(self)
     end
