@@ -88,8 +88,12 @@ module Lita
           if value["blockers"] && !value["blockers"].empty?
             rollcall += "*Blockers:* _#{value["blockers"]}_ "
           end
-          # if value.today.empty?
-          response.reply(rollcall)
+
+          if rollcall
+            response.reply(rollcall)
+          else
+            response.reply("_tumbleweeds roll_ Pretty empty around here. No one's reported in yet.")
+          end
         end
       end
 
