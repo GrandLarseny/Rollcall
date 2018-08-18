@@ -53,7 +53,7 @@ module Lita
         puts "DDL: Calling standup for today - #{today}"
         addStandup(response, today, yesterday, blockers)
 
-        response.reply("Cool beans, @#{response.user.mention_name}! Got your standup for the day.")
+        response.reply("Copy that, @#{response.user.mention_name}!")
       end
 
       def addStandup(response, today, yesterday, blockers)
