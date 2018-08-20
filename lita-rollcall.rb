@@ -107,6 +107,9 @@ For example, `@Standupbot list`"
           puts "DDL: --- value.user = #{value['user']}"
           rollcall = "@#{value["user"]} "
 
+          if value["preamble"] && !value["preamble"].empty?
+            rollcall += "#{value["preamble"]} "
+          end
           if value["today"] && !value["today"].empty?
             rollcall += "*Today:* #{value["today"]} "
           end
