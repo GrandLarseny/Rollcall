@@ -52,7 +52,7 @@ For example, `@Standupbot list`"
         blockers = nil
         
         puts "DDL: Running standup for: #{response.message.body}"
-        results = response.message.body.split(/(t|today|y|yesterday|b|blocker) *[-:]\s*/i)
+        results = response.message.body.split(/(t|today|y|yesterday|b|blocker|blocked by) *[-:]\s*/i)
 
         results.each_index do |mi|
           argu = results[mi]
@@ -114,13 +114,13 @@ For example, `@Standupbot list`"
         standups = toadysStandups(response.room.id)
         myStandups = standups.select { |key, standup| standup["user"] = response.user.mention_name }
         lastStandup = myStandups.max_by { |k, standup| standup["timestamp"] }
-        puts "DDL: Removing standup #{lastStandup[0]}"
 
         if lastStandup.nil || lastStandup.empty?
           response.reply("Today is clear @#{response.user.mention_name}, no worries")
           return
         end
 
+        puts "DDL: Removing standup #{lastStandup[0]}"
         firebase = firebaseRef()
         firebase.delete("standups/#{lastStandup[0]}")
 
