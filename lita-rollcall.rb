@@ -105,7 +105,7 @@ module Lita
       puts "DDL: Removing standup #{lastStandup[0]}"
 
       firebase = firebaseRef()
-      firebase.delete("standups/#{lastStandup[0].key}")
+      firebase.delete("standups/#{lastStandup[0]}")
 
       response.reply("Forget it ever happened, @#{response.user.mention_name}")
     end
