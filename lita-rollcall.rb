@@ -23,6 +23,12 @@ module Lita
       route(/^i (have )?regret/i, :removeLast, command: true)
       route(/^nonono/i, :removeLast, command: true)
 
+      on(:unhandled_message) do |payload|
+        puts "DDL: Unhandled message with payload #{payload}"
+        response = payload["response"]
+        addStandup(response, "", response.message.body, "", "")
+      end
+
       def firebaseRef
         base_uri = 'https://br-rollcall.firebaseio.com/'
         firebase = Firebase::Client.new(base_uri)
