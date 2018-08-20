@@ -99,12 +99,14 @@ module Lita
         end
         
         if rollcall.empty?
-          response.reply("_tumbleweeds roll_ Pretty empty around here. No one's reported in yet.")
+          response.reply("_[tumbleweeds roll]_ Pretty empty around here. No one's reported in yet.")
         end
     end
 
     def removeLast(response)
       firebase = firebaseRef()
+
+      userStatuses = firebase.get("standups", "orderBy=\"room\"&equalTo=\"#{response.room.id}\"")
 
     end
 
