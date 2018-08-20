@@ -1,5 +1,9 @@
 module Lita
   module Handlers
+    class RollcallStatus
+
+    end
+
     class RollcallRobot < Handler
       require 'firebase'
       require 'date'
@@ -24,9 +28,9 @@ module Lita
       route(/^nonono/i, :removeLast, command: true)
 
       on(:unhandled_message) do |payload|
-        puts "DDL: Unhandled message with payload #{payload}"
         message = payload["message"]
-        addStandup(message, "", message.body, "", "")
+        puts "DDL: Unhandled message with message #{message}"
+        addStandup(message.user.mention_name, message.room_object.id, "", message.body, "", "")
 
         message.reply("Recorded your standup, @#{message.user.mention_name}. _If that isn't what you meant, you can remove the recorded status_")
       end
@@ -92,17 +96,17 @@ For example, `@Standupbot list`"
         end
 
         puts "DDL: Calling standup for today - #{today}"
-        addStandup(response, preamble, today, yesterday, blockers)
+        addStandup(response.user.mention_name, response.room.id, preamble, today, yesterday, blockers)
 
         response.reply("Copy that, @#{response.user.mention_name}!")
       end
 
-      def addStandup(response, preamble, today, yesterday, blockers)
+      def addStandup(user, room, preamble, today, yesterday, blockers)
         firebase = firebaseRef()
 
         date = Date.today.to_s
 
-        firebase.push("standups", { :user => response.user.mention_name, :room => response.room.id, :date => date, :preamble => preamble, :today => today, :yesterday => yesterday, :blockers => blockers, :timestamp => Time.now.to_i })
+        firebase.push("standups", { :user => user, :room => room, :date => date, :preamble => preamble, :today => today, :yesterday => yesterday, :blockers => blockers, :timestamp => Time.now.to_i })
       end
 
       def replyRollcall(response)
