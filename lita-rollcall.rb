@@ -122,6 +122,21 @@ For example, `@Standupbot list`"
 
           response.reply(rollcall)
         end
+
+        blockers = standups.select { |key, standup| standup["blockers"] && !standup["blockers"].empty? }
+        if blockers && !blockers.empty?
+          rollcall = "*_All Blockers_*\n"
+          blockers.each do |key, value|
+            rollcall += "@#{value["user"]} "
+
+            if value["preamble"] && !value["preamble"].empty?
+              rollcall += "#{value["preamble"]} "
+            end
+            rollcall += "*Blockers:* #{value["blockers"]}\n"
+          end
+
+          response.reply(rollcall)
+        end
         
         if rollcall.empty?
           response.reply("_[tumbleweeds roll]_ Pretty empty around here. No one's reported in yet.")
