@@ -54,32 +54,47 @@ For example, `@Standupbot list`"
         puts "DDL: Running standup for: #{response.message.body}"
         results = response.message.body.split(/(t|today|y|yesterday|b|blocker|blocked by) *[-:]\s*/i)
 
+        if !results || results.empty?
+          response.reply("Is this thing on? I didn't see anything there to record as a standup")
+          return
+        end
+
+        preamble = results[0]
         results.each_index do |mi|
           argu = results[mi]
           puts "DDL: -- Matching #{argu}"
           if argu.match(/^t(oday)?/i)
             today = results[mi + 1]
+            if mi == 0
+              preamble = ""
+            end
           end
           if argu.match(/^y(esterday)?/i)
             yesterday = results[mi + 1]
+            if mi == 0
+              preamble = ""
+            end
           end
           if argu.match(/^b(locker)?/i)
             blockers = results[mi + 1]
+            if mi == 0
+              preamble = ""
+            end
           end
         end
 
         puts "DDL: Calling standup for today - #{today}"
-        addStandup(response, today, yesterday, blockers)
+        addStandup(response, preamble, today, yesterday, blockers)
 
         response.reply("Copy that, @#{response.user.mention_name}!")
       end
 
-      def addStandup(response, today, yesterday, blockers)
+      def addStandup(response, preamble, today, yesterday, blockers)
         firebase = firebaseRef()
 
         date = Date.today.to_s
 
-        firebase.push("standups", { :user => response.user.mention_name, :room => response.room.id, :date => date, :today => today, :yesterday => yesterday, :blockers => blockers, :timestamp => Time.now.to_i })
+        firebase.push("standups", { :user => response.user.mention_name, :room => response.room.id, :date => date, :preamble => preamble, :today => today, :yesterday => yesterday, :blockers => blockers, :timestamp => Time.now.to_i })
       end
 
       def replyRollcall(response)
