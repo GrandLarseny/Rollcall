@@ -32,7 +32,7 @@ module Lita
         puts "DDL: Unhandled message with message #{message}"
         addStandup(message.user.mention_name, message.room_object.id, "", message.body, "", "")
 
-        message.reply("Recorded your standup, @#{message.user.mention_name}. _If that isn't what you meant, you can remove the recorded status_")
+        message.reply("Recorded your standup, @#{message.user.mention_name} _If that isn't what you meant, you can remove the recorded status_")
       end
 
       def firebaseRef
