@@ -102,6 +102,7 @@ module Lita
       standups = toadysStandups(response.room.id)
       myStandups = standups.select { |key, standup| standup["user"] = response.user.mention_name }
       lastStandup = myStandups.max_by { |k, standup| standup["timestamp"] }
+      puts "DDL: Removing standup #{lastStandup}"
 
       firebase = firebaseRef()
       firebase.delete("standups/#{lastStandup.key}")
