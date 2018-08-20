@@ -19,6 +19,11 @@ module Lita
       route(/^callout/i, :replyRollcall, command: true)
       route(/^list/i, :replyRollcall, command: true)
 
+      route(/^remove/i, :removeLast, command: true)
+      route(/^belay/i, :removeLast, command: true)
+      route(/^i (have )?regret/i, :removeLast, command: true)
+      route(/^nonono/i, :removeLast, command: true)
+
       def firebaseRef
         base_uri = 'https://br-rollcall.firebaseio.com/'
         firebase = Firebase::Client.new(base_uri)
@@ -73,6 +78,7 @@ module Lita
         date = Date.today.to_s
         standups = rollcallResponse.body.select { |key, standup| standup["date"] == date }
 
+        rollcall = ""
         standups.each do |key, value|
           puts "DDL: --- rollcall #{value}"
 
@@ -92,12 +98,17 @@ module Lita
           response.reply(rollcall)
         end
         
-        if !rollcall
+        if rollcall.empty?
           response.reply("_tumbleweeds roll_ Pretty empty around here. No one's reported in yet.")
         end
     end
 
-      Lita.register_handler(self)
+    def removeLast(response)
+      firebase = firebaseRef()
+
+    end
+
+    Lita.register_handler(self)
     end
   end
 end
