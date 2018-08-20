@@ -25,8 +25,10 @@ module Lita
 
       on(:unhandled_message) do |payload|
         puts "DDL: Unhandled message with payload #{payload}"
-        response = payload["response"]
-        addStandup(response, "", response.message.body, "", "")
+        message = payload["message"]
+        addStandup(message, "", message.body, "", "")
+
+        message.reply("Recorded your standup, @#{message.user.mention_name}. _If that isn't what you meant, you can remove the recorded status_")
       end
 
       def firebaseRef
