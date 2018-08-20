@@ -28,7 +28,7 @@ module Lita
       route(/^nonono/i, :removeLast, command: true)
 
       on(:unhandled_message) do |payload|
-        message = payload["message"]
+        message = payload.message
         puts "DDL: Unhandled message with message #{message}"
         addStandup(message.user.mention_name, message.room_object.id, "", message.body, "", "")
 
