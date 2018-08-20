@@ -117,7 +117,7 @@ For example, `@Rollcall list`"
         lastStandup = myStandups.max_by { |k, standup| standup["timestamp"] }
         puts "DDL: Removing standup #{lastStandup[0]}"
 
-        if lastStandup.empty?
+        if !lastStandup, lastStandup.empty?
           response.reply("Today is clear @#{response.user.mention_name}, no worries")
           return
         end
