@@ -30,8 +30,7 @@ module Lita
       end
 
       def helpMe(response)
-        helpText = "Hello, @#{response.user.mention_name}! I'm Rollcall, a chatbot designed to help you keep track of the daily standup.
-There are a handful of things you can do. You can add a standup status, remove the latest status, or list all the standups for day.
+        helpText = "Hello, @#{response.user.mention_name}! I'm Rollcall, a chatbot designed to help you keep track of the daily standup. There are a handful of things you can do. You can add a standup status, remove the latest status, or list all the standups for day.
 
 To add a status, just format it with today's status, yesterday's status, and any blockers if applicable. All three are optional.
 For example, `@Rollcall Yesterday: Worked on the test scripts. Today: Testing out the capacitor. Blocker: Rain.`
@@ -117,6 +116,11 @@ For example, `@Rollcall list`"
         myStandups = standups.select { |key, standup| standup["user"] = response.user.mention_name }
         lastStandup = myStandups.max_by { |k, standup| standup["timestamp"] }
         puts "DDL: Removing standup #{lastStandup[0]}"
+
+        if lastStandup.empty?
+          response.reply("Today is clear @#{response.user.mention_name}, no worries")
+          return
+        end
 
         firebase = firebaseRef()
         firebase.delete("standups/#{lastStandup[0]}")
