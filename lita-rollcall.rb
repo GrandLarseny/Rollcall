@@ -31,15 +31,16 @@ module Lita
 
       def helpMe(response)
         helpText = "Hello, @#{response.user.mention_name}! I'm Rollcall, a chatbot designed to help you keep track of the daily standup.
-        There are a handful of things you can do. You can add a standup status, remove the latest status, or list all the standups for day.
-          To add a status, just format it with today's status, yesterday's status, and any blockers if applicable. All three are optional.
-          For example, '@Rollcall Yesterday: Worked on the test scripts. Today: Testing out the capacitor. Blocker: Rain.'
-          
-          To remove a status, just tell me to remove the last status.
-          For example, '@Rollcall remove'
-          
-          And to display the statuses, just tell me to list them out.
-          For example, '@Rollcall list'"
+There are a handful of things you can do. You can add a standup status, remove the latest status, or list all the standups for day.
+
+To add a status, just format it with today's status, yesterday's status, and any blockers if applicable. All three are optional.
+For example, `@Rollcall Yesterday: Worked on the test scripts. Today: Testing out the capacitor. Blocker: Rain.`
+
+To remove a status, just tell me to remove the last status.
+For example, `@Rollcall remove`
+
+And to display the statuses, just tell me to list them out.
+For example, `@Rollcall list`"
         response.reply(helpText)
       end
 
