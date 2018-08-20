@@ -115,7 +115,7 @@ For example, `@Standupbot list`"
         myStandups = standups.select { |key, standup| standup["user"] = response.user.mention_name }
         lastStandup = myStandups.max_by { |k, standup| standup["timestamp"] }
 
-        if lastStandup.empty? || lastStandup.length <= 0
+        if !lastStandup || lastStandup.empty? || lastStandup.length <= 0
           response.reply("Today is clear @#{response.user.mention_name}, no worries")
           return
         end
