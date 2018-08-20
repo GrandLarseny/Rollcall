@@ -66,19 +66,14 @@ module Lita
 
         date = Date.today.to_s
 
-        firebase.push("standups", { :user => response.user.mention_name, :room => response.room.id, :date => date, :today => today, :yesterday => yesterday, :blockers => blockers })
+        firebase.push("standups", { :user => response.user.mention_name, :room => response.room.id, :date => date, :today => today, :yesterday => yesterday, :blockers => blockers, :timestamp => Time.now.to_i })
       end
 
 
       def replyRollcall(response)
-        firebase = firebaseRef()
-        rollcallResponse = firebase.get("standups", "orderBy=\"room\"&equalTo=\"#{response.room.id}\"")
-        puts "DDL: Found standups #{rollcallResponse.raw_body}"
-
-        date = Date.today.to_s
-        standups = rollcallResponse.body.select { |key, standup| standup["date"] == date }
-
         rollcall = ""
+
+        standups = toadysStandups(response.room.id)
         standups.each do |key, value|
           puts "DDL: --- rollcall #{value}"
 
@@ -104,10 +99,24 @@ module Lita
     end
 
     def removeLast(response)
+      standups = toadysStandups(response.room.id)
+      myStandups = standups.select { |key, standup| standup["user"] = response.user.mention_name }
+      lastStandup = myStandups.max_by { |k, standup| standup["timestamp"] }
+
       firebase = firebaseRef()
+      firebase.delete("standups/#{lastStandup.key}")
 
-      userStatuses = firebase.get("standups", "orderBy=\"room\"&equalTo=\"#{response.room.id}\"")
+      response.reply("Forget it ever happened, @#{response.user.mention_name}")
+    end
 
+    def toadysStandups(room)
+      firebase = firebaseRef()
+      rollcallResponse = firebase.get("standups", "orderBy=\"room\"&equalTo=\"#{room}\"")
+      puts "DDL: Found standups #{rollcallResponse.raw_body}"
+
+      date = Date.today.to_s
+
+      rollcallResponse.body.select { |key, standup| standup["date"] == date }
     end
 
     Lita.register_handler(self)
