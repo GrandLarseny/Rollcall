@@ -29,6 +29,9 @@ module Lita
 
       on(:unhandled_message) do |payload|
         message = payload[:message]
+
+        return unless message.command?
+
         puts "DDL: Unhandled message with message #{message}"
         addStandup(message.user.mention_name, message.room_object.id, "", message.body, "", "")
 
