@@ -13,12 +13,14 @@ module Lita
         "echo TEXT" => "Replies back with TEXT."
       })
 
-      route(/^help$/, :helpMe, command: true, help: "List out all the great things about Standupbot! That this!")
+      route(/^help$/, :helpMe, command: true)
       route(/^what *it *do$/, :helpMe, command: true)
       route(/^halp$/, :helpMe, command: true)
 
       route(/(t|today|y|yesterday|b|blocker|blocked by) *[-:]\s*/i, :standup, command: true)
 
+      route(/^print/i, :replyRollcall, command: true)
+      route(/^rollcall/i, :replyRollcall, command: true)
       route(/^callout/i, :replyRollcall, command: true)
       route(/^list/i, :replyRollcall, command: true)
 
@@ -30,12 +32,12 @@ module Lita
       on(:unhandled_message) do |payload|
         message = payload[:message]
 
-        return unless message.command?
+        if message && message.command?
+          puts "DDL: Unhandled message with message #{message}"
+          addStandup(message.user.mention_name, message.room_object.id, "", message.body, "", "")
 
-        puts "DDL: Unhandled message with message #{message}"
-        addStandup(message.user.mention_name, message.room_object.id, "", message.body, "", "")
-
-        message.reply("Recorded your standup, @#{message.user.mention_name} _If that isn't what you meant, you can remove the recorded status_")
+          message.reply("Recorded your standup, @#{message.user.mention_name} _If that isn't what you meant, you can remove the recorded status_")
+        end
       end
 
       def firebaseRef
