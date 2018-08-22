@@ -3,8 +3,6 @@ module Lita
     Help.routes.pop
 
     class RollcallRobot < Handler
-      botName = "standup-bot"
-      
       require 'firebase'
       require 'date'
 
@@ -48,6 +46,8 @@ module Lita
       end
 
       def helpMe(response)
+        botName = "standup-bot"
+      
         helpText = "Hello, @#{response.user.mention_name}! I'm #{botName}, a chatbot designed to help you keep track of the daily standup. There are a handful of things you can do. You can add a standup status, remove the latest status, or list all the standups for day.
 
 To add a status, just format it with today's status, yesterday's status, and any blockers if applicable. All three are optional.
@@ -67,30 +67,30 @@ For the very curious, you can try `@#{botName} secret help`"
         helpText = "Wow, you totally hacked the system and found the secret stash of all my commands! You are the best hacker ever, the Gibson is no match for you.
 
 So, when you're typing out a new standup, you can use the any of the following to start the Today, Yesterday or Blocker sections, and upper/lowercase does not matter:
- - T:
- - T -
- - Today:
- - Today-
- - Y:
- - Y -
- - Yesterday:
- - B:
- - Blocker:
+• T:
+• T -
+• Today:
+• Today-
+• Y:
+• Y -
+• Yesterday:
+• B:
+• Blocker:
 ...etc. Basically anything that's the word or first letter followed by a colon (:) or dash (-)
 
 When you want to list out all the standups for a room, you can start a command with any of the following:
-- print
-- rollcall
-- callout
-- list
-- log
+• print
+• rollcall
+• callout
+• list
+• log
 
 And when you want to remove a standup, you can start you command with any of the following
- - remove
- - belay
- - i regret
- - i have regrets
- - nonono
+• remove
+• belay
+• i regret
+• i have regrets
+• nonono
 
 That's about it! Great pwning!
 "
