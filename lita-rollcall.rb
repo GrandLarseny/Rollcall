@@ -78,25 +78,21 @@ For example, `@Standupbot list`"
 
         preamble = results[0]
         results.each_index do |mi|
+          next if !results[mi].match(/^(t|today|y|yesterday|b|blocker)$/i)
+
           argu = results[mi]
           puts "DDL: -- Matching #{argu}"
           if argu.match(/^t(oday)?/i)
             today = results[mi + 1]
-            if mi == 0
-              preamble = ""
-            end
+            preamble = "" if mi == 0
           end
           if argu.match(/^y(esterday)?/i)
             yesterday = results[mi + 1]
-            if mi == 0
-              preamble = ""
-            end
+            preamble = "" if mi == 0
           end
           if argu.match(/^b(locker)?/i)
             blockers = results[mi + 1]
-            if mi == 0
-              preamble = ""
-            end
+            preamble = "" if mi == 0
           end
         end
 
