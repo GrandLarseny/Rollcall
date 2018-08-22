@@ -1,10 +1,10 @@
 module Lita
   module Handlers
-    class RollcallStatus
-
-    end
+    Help.routes.pop
 
     class RollcallRobot < Handler
+      botName = "standup-bot"
+      
       require 'firebase'
       require 'date'
 
@@ -16,6 +16,7 @@ module Lita
       route(/^help$/, :helpMe, command: true)
       route(/^what *it *do$/, :helpMe, command: true)
       route(/^halp$/, :helpMe, command: true)
+      route(/^secret help$/, :verboseHelpMe, command: true)
 
       route(/(t|today|y|yesterday|b|blocker|blocked by) *[-:]\s*/i, :standup, command: true)
 
@@ -23,6 +24,7 @@ module Lita
       route(/^rollcall/i, :replyRollcall, command: true)
       route(/^callout/i, :replyRollcall, command: true)
       route(/^list/i, :replyRollcall, command: true)
+      route(/^log/i, :replyRollcall, command: true)
 
       route(/^remove/i, :removeLast, command: true)
       route(/^belay/i, :removeLast, command: true)
@@ -36,7 +38,7 @@ module Lita
           puts "DDL: Unhandled message with message #{message}"
           addStandup(message.user.mention_name, message.room_object.id, "", message.body, "", "")
 
-          message.reply("Recorded your standup, @#{message.user.mention_name} _If that isn't what you meant, you can remove the recorded status_")
+          message.reply_privately("Recorded your standup, @#{message.user.mention_name} _If that isn't what you meant, you can remove the recorded status_")
         end
       end
 
@@ -46,16 +48,53 @@ module Lita
       end
 
       def helpMe(response)
-        helpText = "Hello, @#{response.user.mention_name}! I'm Standupbot, a chatbot designed to help you keep track of the daily standup. There are a handful of things you can do. You can add a standup status, remove the latest status, or list all the standups for day.
+        helpText = "Hello, @#{response.user.mention_name}! I'm #{botName}, a chatbot designed to help you keep track of the daily standup. There are a handful of things you can do. You can add a standup status, remove the latest status, or list all the standups for day.
 
 To add a status, just format it with today's status, yesterday's status, and any blockers if applicable. All three are optional.
-For example, `@Standupbot Yesterday: Worked on the test scripts. Today: Testing out the capacitor. Blocker: Rain.`
+For example, `@#{botName} Yesterday: Worked on the test scripts. Today: Testing out the capacitor. Blocker: Rain.`
 
 To remove a status, just tell me to remove the last status.
-For example, `@Standupbot remove`
+For example, `@#{botName} remove`
 
 And to display the statuses, just tell me to list them out.
-For example, `@Standupbot list`"
+For example, `@#{botName} list`
+
+For the very curious, you can try `@#{botName} secret help`"
+        response.reply(helpText)
+      end
+
+      def verboseHelpMe(response)
+        helpText = "Wow, you totally hacked the system and found the secret stash of all my commands! You are the best hacker ever, the Gibson is no match for you.
+
+So, when you're typing out a new standup, you can use the any of the following to start the Today, Yesterday or Blocker sections, and upper/lowercase does not matter:
+ - T:
+ - T -
+ - Today:
+ - Today-
+ - Y:
+ - Y -
+ - Yesterday:
+ - B:
+ - Blocker:
+...etc. Basically anything that's the word or first letter followed by a colon (:) or dash (-)
+
+When you want to list out all the standups for a room, you can start a command with any of the following:
+- print
+- rollcall
+- callout
+- list
+- log
+
+And when you want to remove a standup, you can start you command with any of the following
+ - remove
+ - belay
+ - i regret
+ - i have regrets
+ - nonono
+
+That's about it! Great pwning!
+"
+
         response.reply(helpText)
       end
 
