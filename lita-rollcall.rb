@@ -67,7 +67,7 @@ For the very curious, you can try `@#{botName} secret help`"
         helpText = "Wow, you totally hacked the system and found the secret stash of all my commands! You are the best hacker ever, the Gibson is no match for you.
 
 So, when you're typing out a new standup, you can use the any of the following to start the Today, Yesterday or Blocker sections, and upper/lowercase does not matter:
-T:
+```T:
 T -
 Today:
 Today-
@@ -75,22 +75,22 @@ Y:
 Y -
 Yesterday:
 B:
-Blocker:
+Blocker:```
 ...etc. Basically anything that's the word or first letter followed by a colon (:) or dash (-)
 
 When you want to list out all the standups for a room, you can start a command with any of the following:
-print
+```print
 rollcall
 callout
 list
-log
+log```
 
 And when you want to remove a standup, you can start you command with any of the following
-remove
+```remove
 belay
 i regret
 i have regrets
-nonono
+nonono```
 
 That's about it! Great pwning!
 "
