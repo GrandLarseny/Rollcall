@@ -57,19 +57,19 @@ module Rollcall
       @firebase.push("standups", { :user => standup.user, :room => standup.room, :date => date, :preamble => standup.preamble, :today => standup.today, :yesterday => standup.yesterday, :blockers => standup.blockers, :timestamp => Time.now.to_i })
     end
 
-    def removeLast(user, room)
+    def removeLast(user, room, mention_name)
       standups = toadysStandups(room)
       myStandups = standups.select { |key, standup| standup["user"] = user }
       lastStandup = myStandups.max_by { |k, standup| standup["timestamp"] }
 
       if !lastStandup || lastStandup.empty? || lastStandup.length <= 0
-        return "Today is clear @#{response.user.mention_name}, no worries"
+        return "Today is clear @#{mention_name}, no worries"
       end
 
       puts "DDL: Removing standup #{lastStandup[0]}"
       @firebase.delete("standups/#{lastStandup[0]}")
 
-      "Forget it ever happened, @#{response.user.mention_name}"
+      "Forget it ever happened, @#{mention_name}"
     end
 
 

@@ -21,8 +21,7 @@ module Lita
       route(/^halp$/, :helpMe, command: true)
       route(/^secret help$/, :verboseHelpMe, command: true)
 
-      route(/ (t|today|y|yesterday|b|blocker|blocked by) *[-:]\s*/i, :standup, command: true) # We need the standup portion to be preceeded by a space
-      route(/^(t|today|y|yesterday|b|blocker|blocked by) *[-:]\s*/i, :standup, command: true) # Unless it's the very first item
+      route(/(t|today|y|yesterday|b|blocker|blocked by) *[-:]\s*/i, :standup, command: true) # We need the standup portion to be preceeded by a space
 
       route(/^print/i, :replyRollcall, command: true)
       route(/^rollcall/i, :replyRollcall, command: true)
@@ -159,7 +158,7 @@ That's about it! Great pwning!
       end
 
       def removeLast(response)
-        response.reply(@service.removeLast(response.user.mention_name, response.room.id))
+        response.reply(@service.removeLast(response.user.mention_name, response.room.id, response.user.mention_name))
       end
 
       Lita.register_handler(self)
