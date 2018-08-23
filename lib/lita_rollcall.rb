@@ -7,7 +7,9 @@ module Lita
       require 'date'
       require_relative './standups'
 
-      @service = Rollcall::Service.new()
+      def initialize()
+        @service = Rollcall::Service.new()
+      end
 
       route(/^yo,\s*(.+)/i, :echo, command: true)
       route(/^echo\s+(.+)/, :echo, command: true, help: {
