@@ -5,7 +5,7 @@ module Lita
     class RollcallRobot < Handler
       require 'firebase'
       require 'date'
-      require 'standups'
+      require_relative './standups'
 
       @service = Rollcall::Service.new()
 
