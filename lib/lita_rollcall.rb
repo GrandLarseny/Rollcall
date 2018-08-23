@@ -7,7 +7,7 @@ module Lita
       require 'date'
       require_relative './standups'
 
-      def initialize()
+      def initialize(config)
         @service = Rollcall::Service.new()
       end
 
