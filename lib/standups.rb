@@ -47,7 +47,9 @@ module Rollcall
     require 'firebase'
     require 'date'
 
-    @firebase = Firebase::Client.new('https://br-rollcall.firebaseio.com/')
+    def initialize()
+      @firebase = Firebase::Client.new('https://br-rollcall.firebaseio.com/')
+    end
 
     def addStandup(standup)
       firebase = firebaseRef()
