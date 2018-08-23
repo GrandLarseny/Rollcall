@@ -42,7 +42,7 @@ module Lita
           newStandup = Rollcall::Standup.new(message.user.mention_name, message.room_object.id, message.body)
           @service.addStandup(newStandup)
 
-          message.reply_privately("Recorded your standup, @#{message.user.mention_name} _If that isn't what you meant, you can remove the recorded status_")
+          message.reply("Recorded your standup, @#{message.user.mention_name}")
         end
       end
 
