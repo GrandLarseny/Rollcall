@@ -1,11 +1,11 @@
 ruby '2.3.7'
 source "https://rubygems.org"
 
-gem 'rspec'
 gem "firebase"
 gem "lita-heroku-keepalive"
 gem "lita"
 gem "lita-slack"
+gem "rspec"
 
 # Uncomment to use the IRC adapter
 # gem "lita-irc"
