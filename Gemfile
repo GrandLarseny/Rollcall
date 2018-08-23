@@ -1,6 +1,7 @@
 ruby '2.3.7'
 source "https://rubygems.org"
 
+gem 'rspec'
 gem "firebase"
 gem "lita-heroku-keepalive"
 gem "lita"

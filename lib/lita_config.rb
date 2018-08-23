@@ -2,7 +2,7 @@ Lita.configure do |config|
   # The name your robot will use.
   config.robot.name = "Rollcall"
 
-  require './lita-rollcall'
+  require './lita_rollcall'
 
   # The locale code for the language to use.
   # config.robot.locale = :en

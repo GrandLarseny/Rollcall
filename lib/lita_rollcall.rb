@@ -5,6 +5,9 @@ module Lita
     class RollcallRobot < Handler
       require 'firebase'
       require 'date'
+      require 'standups'
+
+      @service = Rollcall::Service.new()
 
       route(/^yo,\s*(.+)/i, :echo, command: true)
       route(/^echo\s+(.+)/, :echo, command: true, help: {
@@ -16,7 +19,8 @@ module Lita
       route(/^halp$/, :helpMe, command: true)
       route(/^secret help$/, :verboseHelpMe, command: true)
 
-      route(/(t|today|y|yesterday|b|blocker|blocked by) *[-:]\s*/i, :standup, command: true)
+      route(/ (t|today|y|yesterday|b|blocker|blocked by) *[-:]\s*/i, :standup, command: true) # We need the standup portion to be preceeded by a space
+      route(/^(t|today|y|yesterday|b|blocker|blocked by) *[-:]\s*/i, :standup, command: true) # Unless it's the very first item
 
       route(/^print/i, :replyRollcall, command: true)
       route(/^rollcall/i, :replyRollcall, command: true)
@@ -33,38 +37,34 @@ module Lita
         message = payload[:message]
 
         if message && message.command?
-          puts "DDL: Unhandled message with message #{message}"
-          addStandup(message.user.mention_name, message.room_object.id, "", message.body, "", "")
+          puts "DDL: Default command with body #{message.body}"
+          newStandup = Rollcall::Standup.new(message.user.mention_name, message.room_object.id, message.body)
+          @service.addStandup(newStandup)
 
           message.reply_privately("Recorded your standup, @#{message.user.mention_name} _If that isn't what you meant, you can remove the recorded status_")
         end
       end
 
-      def firebaseRef
-        base_uri = 'https://br-rollcall.firebaseio.com/'
-        firebase = Firebase::Client.new(base_uri)
-      end
-
       def helpMe(response)
-        botName = "standup-bot"
+        bot_name = "standup-bot"
       
-        helpText = "Hello, @#{response.user.mention_name}! I'm #{botName}, a chatbot designed to help you keep track of the daily standup. There are a handful of things you can do. You can add a standup status, remove the latest status, or list all the standups for day.
+        help_text = "Hello, @#{response.user.mention_name}! I'm #{bot_name}, a chatbot designed to help you keep track of the daily standup. There are a handful of things you can do. You can add a standup status, remove the latest status, or list all the standups for day.
 
 To add a status, just format it with today's status, yesterday's status, and any blockers if applicable. All three are optional.
-For example, `@#{botName} Yesterday: Worked on the test scripts. Today: Testing out the capacitor. Blocker: Rain.`
+For example, `@#{bot_name} Yesterday: Worked on the test scripts. Today: Testing out the capacitor. Blocker: Rain.`
 
 To remove a status, just tell me to remove the last status.
-For example, `@#{botName} remove`
+For example, `@#{bot_name} remove`
 
 And to display the statuses, just tell me to list them out.
-For example, `@#{botName} list`
+For example, `@#{bot_name} list`
 
-For the very curious, you can try `@#{botName} secret help`"
-        response.reply(helpText)
+For the very curious, you can try `@#{bot_name} secret help`"
+        response.reply(help_text)
       end
 
       def verboseHelpMe(response)
-        helpText = "Wow, you totally hacked the system and found the secret stash of all my commands! You are the best hacker ever, the Gibson is no match for you.
+        help_text = "Wow, you totally hacked the system and found the secret stash of all my commands! You are the best hacker ever, the Gibson is no match for you.
 
 So, when you're typing out a new standup, you can use the any of the following to start the Today, Yesterday or Blocker sections, and upper/lowercase does not matter:
 ```T:
@@ -95,7 +95,7 @@ nonono```
 That's about it! Great pwning!
 "
 
-        response.reply(helpText)
+        response.reply(help_text)
       end
 
       def echo(response)
@@ -103,56 +103,17 @@ That's about it! Great pwning!
       end
 
       def standup(response)
-        today = nil
-        yesterday = nil
-        blockers = nil
-        
-        puts "DDL: Running standup for: #{response.message.body}"
-        results = response.message.body.split(/(t|today|y|yesterday|b|blocker|blocked by) *[-:]\s*/i)
+        newStandup = Rollcall::Standup.new(response.user.mention_name, response.room.id, " #{response.message.body}")
 
-        if !results || results.empty?
-          response.reply("Is this thing on? I didn't see anything there to record as a standup")
-          return
-        end
-
-        preamble = results[0]
-        results.each_index do |mi|
-          next if !results[mi].match(/^(t|today|y|yesterday|b|blocker)$/i)
-
-          argu = results[mi]
-          puts "DDL: -- Matching #{argu}"
-          if argu.match(/^t(oday)?/i)
-            today = results[mi + 1]
-            preamble = "" if mi == 0
-          end
-          if argu.match(/^y(esterday)?/i)
-            yesterday = results[mi + 1]
-            preamble = "" if mi == 0
-          end
-          if argu.match(/^b(locker)?/i)
-            blockers = results[mi + 1]
-            preamble = "" if mi == 0
-          end
-        end
-
-        puts "DDL: Calling standup for today - #{today}"
-        addStandup(response.user.mention_name, response.room.id, preamble, today, yesterday, blockers)
+        @service.addStandup(newStandup)
 
         response.reply("Copy that, @#{response.user.mention_name}!")
-      end
-
-      def addStandup(user, room, preamble, today, yesterday, blockers)
-        firebase = firebaseRef()
-
-        date = Date.today.to_s
-
-        firebase.push("standups", { :user => user, :room => room, :date => date, :preamble => preamble, :today => today, :yesterday => yesterday, :blockers => blockers, :timestamp => Time.now.to_i })
       end
 
       def replyRollcall(response)
         rollcall = ""
 
-        standups = toadysStandups(response.room.id)
+        standups = @service.toadysStandups(response.room.id)
         standups.each do |key, value|
           puts "DDL: --- rollcall #{value}"
 
@@ -196,30 +157,7 @@ That's about it! Great pwning!
       end
 
       def removeLast(response)
-        standups = toadysStandups(response.room.id)
-        myStandups = standups.select { |key, standup| standup["user"] = response.user.mention_name }
-        lastStandup = myStandups.max_by { |k, standup| standup["timestamp"] }
-
-        if !lastStandup || lastStandup.empty? || lastStandup.length <= 0
-          response.reply("Today is clear @#{response.user.mention_name}, no worries")
-          return
-        end
-
-        puts "DDL: Removing standup #{lastStandup[0]}"
-        firebase = firebaseRef()
-        firebase.delete("standups/#{lastStandup[0]}")
-
-        response.reply("Forget it ever happened, @#{response.user.mention_name}")
-      end
-
-      def toadysStandups(room)
-        firebase = firebaseRef()
-        rollcallResponse = firebase.get("standups", "orderBy=\"room\"&equalTo=\"#{room}\"")
-        puts "DDL: Found standups #{rollcallResponse.raw_body}"
-
-        date = Date.today.to_s
-
-        rollcallResponse.body.select { |key, standup| standup["date"] == date }
+        response.reply(@service.removeLast(response.user.mention_name, response.room.id))
       end
 
       Lita.register_handler(self)
