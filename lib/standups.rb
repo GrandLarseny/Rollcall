@@ -52,8 +52,6 @@ module Rollcall
     end
 
     def addStandup(standup)
-      firebase = firebaseRef()
-
       date = Date.today.to_s
 
       @firebase.push("standups", { :user => standup.user, :room => standup.room, :date => date, :preamble => standup.preamble, :today => standup.today, :yesterday => standup.yesterday, :blockers => standup.blockers, :timestamp => Time.now.to_i })
