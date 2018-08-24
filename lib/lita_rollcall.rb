@@ -116,9 +116,8 @@ That's about it! Great pwning!
 
         standups = @service.toadysStandups(response.room.id)
         standups.each do |key, value|
-          puts "DDL: --- rollcall #{value}"
+          puts "DDL: --- rollcall #{response.room.id} #{value['user']}: Today #{value["today"]}"
 
-          puts "DDL: --- value.user = #{value['user']}"
           rollcall = "@#{value["user"]} "
 
           if value["preamble"] && !value["preamble"].empty?

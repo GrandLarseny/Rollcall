@@ -15,15 +15,16 @@ module Rollcall
 
       puts "DDL: Creating standup for: #{message}"
       results = message.split(/ (t|today|y|yesterday|b|blocker|blocked by) *[-:]\s*/i)
+      puts results
 
       if !results || results.empty? || results.count == 1
-        @today = message
+        @today = message.strip
         return
       end
 
       @preamble = results[0].strip
       results.each_index do |mi|
-        next if !results[mi].match(/^(t|today|y|yesterday|b|blocker)$/i)
+        next if !results[mi].match(/^(t|today|y|yesterday|b|blocker|blocked by)$/i)
 
         argu = results[mi]
         puts "DDL: -- Matching #{argu}"
@@ -35,7 +36,7 @@ module Rollcall
           @yesterday = results[mi + 1].strip
           @preamble = "" if mi == 0
         end
-        if argu.match(/^b(locker)?/i)
+        if argu.match(/^(b|blocker|blocked by)/i)
           @blockers = results[mi + 1].strip
           @preamble = "" if mi == 0
         end 
@@ -75,7 +76,6 @@ module Rollcall
 
     def toadysStandups(room)
       rollcall_response = @firebase.get("standups", "orderBy=\"room\"&equalTo=\"#{room}\"")
-      puts "DDL: Found standups #{rollcall_response.raw_body}"
 
       date = Date.today.to_s
 

@@ -21,4 +21,17 @@ RSpec.describe Rollcall::Standup, "#standup" do
     expect(newStandup.today).to eq "the end of iPad work is in sight and going well!! 5.9 is wrapping up, airchange work has a suddenly reduced timeline that we are working to get, but it seems doable."
     expect(newStandup.blockers).to eq "ninja turtles"
   end
+
+  it "Visible iOS: T - Working on a pre-active screen to replace the purchased landing page. Also finishing up some UI test cases. Blocked by - package tracking number in cart response" do
+    newStandup = Rollcall::Standup.new("test", "aRoom", "Visible iOS: T - Working on a pre-active screen to replace the purchased landing page. Also finishing up some UI test cases. Blocked by - package tracking number in cart response")
+    expect(newStandup.preamble).to eq "Visible iOS:"
+    expect(newStandup.today).to eq "Working on a pre-active screen to replace the purchased landing page. Also finishing up some UI test cases."
+    expect(newStandup.blockers).to eq "package tracking number in cart response"
+  end
+
+  it "Visible Web - chugging along; ASC Web - partially blocked by needing more details/decisions from client on tickets but still moving some things" do
+    newStandup = Rollcall::Standup.new("test", "aRoom", "Visible Web - chugging along; ASC Web - partially blocked by needing more details/decisions from client on tickets but still moving some things")
+    expect(newStandup.today).to eq "Visible Web - chugging along; ASC Web - partially blocked by needing more details/decisions from client on tickets but still moving some things"
+    expect(newStandup.blockers).to eq nil
+  end
 end
